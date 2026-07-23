@@ -17,6 +17,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^4.0.20",
     "@e2b/code-interpreter": "^2.7.0",
     "@git-diff-view/file": "^0.0.32",
     "@git-diff-view/react": "^0.0.32",

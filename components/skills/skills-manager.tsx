@@ -199,7 +199,8 @@ export function SkillsManager() {
       id: 'e2b-code-sandbox',
       name: 'E2B MicroVM Code Interpreter',
       category: 'System & Files',
-      description: 'Executes LLM-generated code (Python, Node, Rust) in secure, isolated cloud sandboxes for real-time validation.',
+      description:
+        'Executes LLM-generated code (Python, Node, Rust) in secure, isolated cloud sandboxes for real-time validation.',
       isEnabled: true,
       accessLevel: 'Sandboxed',
       openSourcePrompt: 'Initialize E2B Code Interpreter, run script securely, and return stdout/stderr.',
@@ -208,7 +209,8 @@ export function SkillsManager() {
       id: 'vector-memory-rag',
       name: 'Long-Term Vector Memory (Pinecone/Qdrant)',
       category: 'Database & Data',
-      description: 'Provides long-term RAG memory by storing workflows, schemas, and historical context via embeddings.',
+      description:
+        'Provides long-term RAG memory by storing workflows, schemas, and historical context via embeddings.',
       isEnabled: true,
       accessLevel: 'Full Access',
       openSourcePrompt: 'Retrieve related semantic context from Vector Store before answering.',
@@ -226,7 +228,8 @@ export function SkillsManager() {
       id: 'llm-gateway-router',
       name: 'LiteLLM Gateway & Model Router',
       category: 'Web & DevTools',
-      description: 'Dynamically routes tasks to optimal LLMs (DeepSeek, Claude 3.7, GPT-4.5) to balance speed, cost, and capability.',
+      description:
+        'Dynamically routes tasks to optimal LLMs (DeepSeek, Claude 3.7, GPT-4.5) to balance speed, cost, and capability.',
       isEnabled: true,
       accessLevel: 'Full Access',
       openSourcePrompt: 'Route task to appropriate LLM based on taskType (coding vs reasoning).',

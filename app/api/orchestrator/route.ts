@@ -22,20 +22,20 @@ export async function POST(request: Request) {
     const taskType = query.toLowerCase().includes('code') ? 'coding' : 'reasoning'
     const router = LLMGateway.routeTask({
       taskType: taskType,
-      prompt: query
+      prompt: query,
     })
 
     const llmResponse = await router.execute()
-    let sandboxResult = null;
+    let sandboxResult = null
 
     // 3. E2B Sandbox Execution (if code is generated and execution is requested)
     if (requiresExecution && taskType === 'coding') {
       const sandbox = new E2BSandbox()
       await sandbox.initialize()
-      
+
       // We assume the LLM responded with some python code to run
       sandboxResult = await sandbox.runCode('python', 'print("Hello from orchestrated microVM")')
-      
+
       await sandbox.close()
     }
 
@@ -47,9 +47,8 @@ export async function POST(request: Request) {
       agent: router.model,
       response: llmResponse.text,
       sandboxExecution: sandboxResult,
-      contextUsed: similarDocs.length > 0
+      contextUsed: similarDocs.length > 0,
     })
-
   } catch (error) {
     console.error('[Orchestrator Error]', error)
     return NextResponse.json({ error: 'Internal orchestration error' }, { status: 500 })
