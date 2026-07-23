@@ -8,10 +8,10 @@ export async function POST(request: Request) {
     // Example logic: trigger an internal agent workflow based on the webhook payload
     // if (payload.action === 'trigger_agent') { ... }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: 'n8n payload received successfully',
-      receivedData: payload
+      receivedData: payload,
     })
   } catch (error) {
     console.error('[Webhook - n8n] Error parsing payload:', error)

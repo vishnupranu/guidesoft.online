@@ -11,9 +11,9 @@ interface RouteOptions {
 export class LLMGateway {
   static routeTask(options: RouteOptions) {
     console.log(`[LLM Gateway] Routing task of type: ${options.taskType}`)
-    
+
     let selectedModel: AvailableModels = 'gpt-4-turbo'
-    
+
     switch (options.taskType) {
       case 'reasoning':
         selectedModel = 'deepseek-r1'
@@ -29,7 +29,7 @@ export class LLMGateway {
     }
 
     console.log(`[LLM Gateway] Selected model: ${selectedModel} (Optimized for speed/cost/capability)`)
-    
+
     return {
       model: selectedModel,
       execute: async () => {
@@ -37,9 +37,9 @@ export class LLMGateway {
         if (process.env.OPENAI_API_KEY) {
           try {
             const { text } = await generateText({
-              // We pass the selected model string to the OpenAI provider, 
+              // We pass the selected model string to the OpenAI provider,
               // which would theoretically route it via LiteLLM/Portkey in a real setup
-              model: openai('gpt-4-turbo'), 
+              model: openai('gpt-4-turbo'),
               prompt: options.prompt,
             })
             return { text }
@@ -47,10 +47,10 @@ export class LLMGateway {
             console.warn(`[LLM Gateway] Execution failed, falling back to mock...`, e)
           }
         }
-        
+
         console.warn(`[LLM Gateway] OPENAI_API_KEY not found. Using fallback mock response.`)
         return { text: `Mocked response from ${selectedModel}` }
-      }
+      },
     }
   }
 }

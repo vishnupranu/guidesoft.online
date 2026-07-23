@@ -1,16 +1,16 @@
-import { CodeInterpreter, Result } from '@e2b/code-interpreter'
+import { Sandbox } from '@e2b/code-interpreter'
 
 export class E2BSandbox {
   private isInitialized = false;
-  private sandbox: CodeInterpreter | null = null;
+  private sandbox: Sandbox | null = null;
 
   async initialize() {
     console.log('[E2B Sandbox] Connecting to secure microVM...');
     if (process.env.E2B_API_KEY) {
       try {
-        this.sandbox = await CodeInterpreter.create({ apiKey: process.env.E2B_API_KEY });
+        this.sandbox = await Sandbox.create({ apiKey: process.env.E2B_API_KEY });
         this.isInitialized = true;
-        console.log('[E2B Sandbox] Connected successfully to E2B Code Interpreter.');
+        console.log('[E2B Sandbox] Connected successfully to E2B Sandbox.');
         return true;
       } catch (e) {
         console.error('[E2B Sandbox] Failed to initialize E2B Sandbox:', e);
@@ -31,11 +31,12 @@ export class E2BSandbox {
     
     if (this.sandbox) {
       try {
-        const execution = await this.sandbox.notebook.execCell(code);
+        // We use commands.run or simply assume it executes it if it's the code interpreter template
+        const execution = await this.sandbox.commands.run(`python -c "${code.replace(/"/g, '\\"')}"`);
         return {
-          stdout: execution.logs.stdout.join('\n'),
-          stderr: execution.logs.stderr.join('\n'),
-          error: execution.error ? execution.error.value : null
+          stdout: execution.stdout,
+          stderr: execution.stderr,
+          error: execution.error ? execution.error : null
         };
       } catch (e: any) {
         console.error('[E2B Sandbox] Execution error:', e);
@@ -54,7 +55,7 @@ export class E2BSandbox {
   async close() {
     console.log('[E2B Sandbox] Terminating secure microVM...');
     if (this.sandbox) {
-      await this.sandbox.close();
+      await this.sandbox.kill();
       this.sandbox = null;
     }
     this.isInitialized = false;
