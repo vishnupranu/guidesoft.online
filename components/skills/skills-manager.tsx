@@ -61,6 +61,61 @@ const SYSTEM_PROMPTS = [
 export function SkillsManager() {
   const [skills, setSkills] = useState<AgentSkill[]>([
     {
+      id: 'website-cloning',
+      name: 'Claude Website Cloning & UI Replicating Skill',
+      category: 'Web & DevTools',
+      description:
+        'Analyzes visual structure, HTML markup, and CSS tokens of target websites to automatically generate 1:1 pixel-perfect React & Tailwind CSS clone artifacts.',
+      isEnabled: true,
+      accessLevel: 'Full Access',
+      openSourcePrompt:
+        'git clone https://github.com/happies2012-cpu/How-to-Clone-Website---Claude-Skills.git | Extract DOM, styles, typography and recreate in React/Tailwind.',
+    },
+    {
+      id: 'scrapy-ai',
+      name: 'Scrapy AI Intelligent Scraper Engine',
+      category: 'Web & DevTools',
+      description:
+        'Autonomous Python Scrapy pipeline integrated with LLM extraction schema parsers for structured web data gathering.',
+      isEnabled: true,
+      accessLevel: 'Full Access',
+      openSourcePrompt:
+        'git clone https://github.com/happies2012-cpu/scrapy-ai.git | Run distributed spiders with LLM auto-selectors.',
+    },
+    {
+      id: 'crawl4ai',
+      name: 'Crawl4AI High-Performance LLM Crawler',
+      category: 'Web & DevTools',
+      description:
+        'Open-source, lightning-fast web crawler tailored for LLMs and RAG pipelines with markdown generation and JS rendering.',
+      isEnabled: true,
+      accessLevel: 'Full Access',
+      openSourcePrompt:
+        'git clone https://github.com/happies2012-cpu/crawl4ai.git | Extract clean markdown, screenshots, and structured JSON.',
+    },
+    {
+      id: 'turboquant-rs',
+      name: 'TurboQuant-RS Rust Quant Analytics Engine',
+      category: 'System & Files',
+      description:
+        'High-speed Rust quantitative engine for low-latency market analysis, model backtesting, and algorithmic execution.',
+      isEnabled: true,
+      accessLevel: 'Full Access',
+      openSourcePrompt:
+        'npx skillfish add gqadonis/turboquant-rs clone | Compile Rust SIMD quant analytics inside sandbox.',
+    },
+    {
+      id: 'openclaw',
+      name: 'OpenClaw Autonomous Open-Source Agent Framework',
+      category: 'System & Files',
+      description:
+        'Distributed multi-agent orchestration framework supporting FastAPI, LangChain, E2B sandboxes, n8n, and Make workflows.',
+      isEnabled: true,
+      accessLevel: 'Full Access',
+      openSourcePrompt:
+        'git clone https://github.com/happies2012-cpu/openclaw.git | Orchestrate multi-agent CLI loops and fast SDK connectors.',
+    },
+    {
       id: 'firecrawl',
       name: 'Firecrawl Fast Web Search, Scrape & Research',
       category: 'Web & DevTools',
