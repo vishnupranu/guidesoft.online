@@ -1,52 +1,41 @@
-# Coding Agent Template
+# GUIDESOFT.AI | Multi-Agent AI Coding Platform
 
-A template for building AI-powered coding agents that supports Claude Code, OpenAI's Codex CLI, GitHub Copilot CLI, Cursor CLI, Google Gemini CLI, and opencode with [Vercel Sandbox](https://vercel.com/docs/vercel-sandbox) to automatically execute coding tasks on your repositories.
+> Next-Generation Autonomous AI Agent Platform for Software Development & Deployment.
 
-![Coding Agent Template Screenshot](screenshot.png)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-vishnupranu%2Fguidesoft.online-blue?logo=github)](https://github.com/vishnupranu/guidesoft.online)
+[![Vercel Live](https://img.shields.io/badge/Vercel-guidesoft.online-brightgreen?logo=vercel)](https://guidesoft.online)
 
-## Deploy Your Own
+---
 
-You can deploy your own version of the coding agent template to Vercel with one click:
+## 🚀 Overview
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fcoding-agent-template&env=SANDBOX_VERCEL_TEAM_ID,SANDBOX_VERCEL_PROJECT_ID,SANDBOX_VERCEL_TOKEN,JWE_SECRET,ENCRYPTION_KEY&envDescription=Required+environment+variables+for+the+coding+agent+template.+You+must+also+configure+at+least+one+OAuth+provider+(GitHub+or+Vercel)+after+deployment.+Optional+API+keys+can+be+added+later.&stores=%5B%7B%22type%22%3A%22postgres%22%7D%5D&project-name=coding-agent-template&repository-name=coding-agent-template)
+**GUIDESOFT.AI** is an advanced autonomous multi-agent AI coding platform. It allows users to build, refactor, test, and deploy applications simply by chatting with AI agents powered by top cloud and local AI models.
 
-**What happens during deployment:**
-- **Automatic Database Setup**: A Neon Postgres database is automatically created and connected to your project
-- **Environment Configuration**: You'll be prompted to provide required environment variables (Vercel credentials and encryption keys)
-- **OAuth Setup**: After deployment, you'll need to configure at least one OAuth provider (GitHub or Vercel) in your project settings for user authentication
+### 🌟 Key Features
 
-## Features
+- **Multi-Agent Coding Engine**:
+  - **Claude Code CLI** (`claude-3-7-sonnet`, `claude-3-5-sonnet`)
+  - **OpenAI Codex CLI** (`gpt-4o`, `gpt-4.5-turbo`, `o3-mini`, `o1`)
+  - **GitHub Copilot CLI**
+  - **Cursor CLI** (`cursor-fast`, `cursor-small`)
+  - **Google Gemini CLI** (`gemini-2.0-flash`, `gemini-1.5-pro`)
+  - **OpenSource & Local Models (Ollama & OpenRouter)**:
+    - **Ollama Local**: DeepSeek R1, Qwen 2.5 Coder, Llama 3.3, Mistral NeMo, Codestral
+    - **OpenRouter OpenSource**: DeepSeek R1/V3, Qwen 2.5 Coder, Llama 3.3
+- **Vercel Sandbox Execution**: Isolated cloud environments to build, run tests, and spin up dev servers.
+- **GitHub Integration**: Authenticate with GitHub, connect repositories, create branches, commit code, and manage Pull Requests.
+- **Agentic Skills Hub**: Built-in open-source system prompts, MCP tool connectors, and skill workflows.
+- **Split Auth Modal**: Seamless Sign In / Sign Up toggling with split-screen branding.
 
-- **Multi-Agent Support**: Choose from Claude Code, OpenAI Codex CLI, GitHub Copilot CLI, Cursor CLI, Google Gemini CLI, or opencode to execute coding tasks
-- **User Authentication**: Secure sign-in with GitHub or Vercel OAuth
-- **Multi-User Support**: Each user has their own tasks, API keys, and GitHub connection
-- **Vercel Sandbox**: Runs code in isolated, secure sandboxes ([docs](https://vercel.com/docs/vercel-sandbox))
-- **AI Gateway Integration**: Built for seamless integration with [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) for model routing and observability
-- **AI-Generated Branch Names**: Automatically generates descriptive Git branch names using AI SDK 5 + AI Gateway
-- **Task Management**: Track task progress with real-time updates
-- **Persistent Storage**: Tasks stored in Neon Postgres database
-- **Git Integration**: Automatically creates branches and commits changes
-- **Modern UI**: Clean, responsive interface built with Next.js and Tailwind CSS
-- **MCP Server Support**: Connect MCP servers to Claude Code for extended capabilities (Claude only)
+---
 
-## Quick Start
+## 🌐 Production Deployments & Links
 
-For detailed setup instructions, see the [Local Development Setup](#local-development-setup) section below.
+- **Live Web App**: [https://guidesoft.online](https://guidesoft.online) (or [https://www.guidesoft.online](https://www.guidesoft.online))
+- **Vercel Production App**: [https://coding-agent-template-inky-beta.vercel.app](https://coding-agent-template-inky-beta.vercel.app)
+- **GitHub Repository**: [https://github.com/vishnupranu/guidesoft.online](https://github.com/vishnupranu/guidesoft.online)
 
-**TL;DR:**
-1. Click the "Deploy with Vercel" button above (automatic database setup!)
-2. Configure OAuth (GitHub or Vercel) in your project settings
-3. Users sign in and start creating tasks
-
-Or run locally:
-```bash
-git clone https://github.com/vercel-labs/coding-agent-template.git
-cd coding-agent-template
-pnpm install
-# Set up .env.local with required variables
-pnpm db:push
-pnpm dev
-```
+---
 
 ## Usage
 
