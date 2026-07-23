@@ -39,6 +39,7 @@ export class LLMGateway {
             const { text } = await generateText({
               // We pass the selected model string to the OpenAI provider,
               // which would theoretically route it via LiteLLM/Portkey in a real setup
+              // @ts-expect-error - Type mismatch between ai and @ai-sdk/openai versions
               model: openai('gpt-4-turbo'),
               prompt: options.prompt,
             })
