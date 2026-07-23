@@ -24,9 +24,12 @@ export const metadata: Metadata = {
   description:
     'GUIDESOFT.AI - AI-powered coding platform supporting Claude Code, OpenAI Codex CLI, GitHub Copilot, Cursor CLI, Gemini, and opencode with Vercel Sandbox',
   icons: {
-    icon: '/gs-logo.png',
-    shortcut: '/gs-logo.png',
-    apple: '/gs-logo.png',
+    icon: [
+      { url: '/guidesoft-logo.png', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    shortcut: '/guidesoft-logo.png',
+    apple: '/guidesoft-logo.png',
   },
 }
 
