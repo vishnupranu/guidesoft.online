@@ -61,6 +61,17 @@ const SYSTEM_PROMPTS = [
 export function SkillsManager() {
   const [skills, setSkills] = useState<AgentSkill[]>([
     {
+      id: 'firecrawl',
+      name: 'Firecrawl Fast Web Search, Scrape & Research',
+      category: 'Web & DevTools',
+      description:
+        'Firecrawl gives AI agents fast, reliable web context with strong search, clean markdown scraping, live page interaction, document parsing, research index, and page monitoring tools.',
+      isEnabled: true,
+      accessLevel: 'Full Access',
+      openSourcePrompt:
+        'npx -y firecrawl-cli@latest init --all --browser | Firecrawl API Key: fc-2de8f5294b244f4fb82bd92a81277873',
+    },
+    {
       id: 'chrome-devtools',
       name: 'Chrome DevTools & A11y Auditor',
       category: 'Web & DevTools',
@@ -282,7 +293,9 @@ export function SkillsManager() {
                 <BookOpen className="w-4 h-4 text-emerald-400" /> System Prompts & Tools Library (102 Tools & Models)
               </h3>
               <p className="text-xs text-zinc-400 mt-0.5">
-                Cloned directly from <span className="font-mono text-emerald-400">x1xhlol/system-prompts-and-models-of-ai-tools</span> repo (Cursor, Manus AI, Devin, Lovable, v0, Bolt, Windsurf, Replit, Claude Code).
+                Cloned directly from{' '}
+                <span className="font-mono text-emerald-400">x1xhlol/system-prompts-and-models-of-ai-tools</span> repo
+                (Cursor, Manus AI, Devin, Lovable, v0, Bolt, Windsurf, Replit, Claude Code).
               </p>
             </div>
           </div>
