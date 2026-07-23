@@ -274,8 +274,19 @@ export function SkillsManager() {
           </div>
         </div>
       ) : (
-        /* System Prompts Section */
+        /* System Prompts & Tools Library Explorer */
         <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-zinc-900 border border-zinc-800 rounded-xl">
+            <div>
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-emerald-400" /> System Prompts & Tools Library (102 Tools & Models)
+              </h3>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                Cloned directly from <span className="font-mono text-emerald-400">x1xhlol/system-prompts-and-models-of-ai-tools</span> repo (Cursor, Manus AI, Devin, Lovable, v0, Bolt, Windsurf, Replit, Claude Code).
+              </p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 gap-4">
             {SYSTEM_PROMPTS.map((item, idx) => (
               <Card key={idx} className="bg-zinc-900 border border-zinc-800">
@@ -291,7 +302,7 @@ export function SkillsManager() {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-2">
-                  <pre className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-mono text-zinc-300 whitespace-pre-wrap leading-relaxed">
+                  <pre className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-mono text-zinc-300 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">
                     {item.prompt}
                   </pre>
                 </CardContent>
