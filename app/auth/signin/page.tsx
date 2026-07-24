@@ -4,14 +4,16 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { redirectToSignIn } from '@/lib/session/redirect-to-sign-in'
 import { GitHubIcon } from '@/components/icons/github-icon'
+import { GoogleIcon } from '@/components/icons/google-icon'
 import { getEnabledAuthProviders } from '@/lib/auth/providers'
 import { ShieldCheck, Cpu, Layers, Server, CheckCircle2, ArrowRight } from 'lucide-react'
 
 export default function SignInPage() {
   const [loadingVercel, setLoadingVercel] = useState(false)
   const [loadingGitHub, setLoadingGitHub] = useState(false)
+  const [loadingGoogle, setLoadingGoogle] = useState(false)
 
-  const { github: hasGitHub, vercel: hasVercel } = getEnabledAuthProviders()
+  const { github: hasGitHub, vercel: hasVercel, google: hasGoogle } = getEnabledAuthProviders()
 
   const handleVercelSignIn = async () => {
     setLoadingVercel(true)
@@ -21,6 +23,11 @@ export default function SignInPage() {
   const handleGitHubSignIn = () => {
     setLoadingGitHub(true)
     window.location.href = '/api/auth/signin/github'
+  }
+
+  const handleGoogleSignIn = () => {
+    setLoadingGoogle(true)
+    window.location.href = '/api/auth/signin/google'
   }
 
   return (
@@ -87,7 +94,7 @@ export default function SignInPage() {
               {hasGitHub && (
                 <Button
                   onClick={handleGitHubSignIn}
-                  disabled={loadingVercel || loadingGitHub}
+                  disabled={loadingVercel || loadingGitHub || loadingGoogle}
                   className="w-full h-12 bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800 justify-start px-4 gap-3 text-sm font-semibold shadow-md"
                 >
                   {loadingGitHub ? (
@@ -104,10 +111,31 @@ export default function SignInPage() {
                 </Button>
               )}
 
+              {hasGoogle && (
+                <Button
+                  onClick={handleGoogleSignIn}
+                  disabled={loadingVercel || loadingGitHub || loadingGoogle}
+                  className="w-full h-12 bg-white hover:bg-zinc-100 text-black border border-zinc-200 justify-start px-4 gap-3 text-sm font-semibold shadow-md"
+                >
+                  {loadingGoogle ? (
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
+                      Connecting to Google...
+                    </span>
+                  ) : (
+                    <>
+                      <GoogleIcon className="h-5 w-5" />
+                      <span>Continue with Google</span>
+                    </>
+                  )}
+                </Button>
+              )}
+
+
               {hasVercel && (
                 <Button
                   onClick={handleVercelSignIn}
-                  disabled={loadingVercel || loadingGitHub}
+                  disabled={loadingVercel || loadingGitHub || loadingGoogle}
                   className="w-full h-12 bg-white hover:bg-zinc-100 text-black justify-start px-4 gap-3 text-sm font-semibold shadow-md"
                 >
                   {loadingVercel ? (
