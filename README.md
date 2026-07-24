@@ -1,4 +1,4 @@
-# GUIDESOFT.AI | Multi-Agent AI Coding Platform
+# GUIDESOFT.ONLINE | Multi-Agent AI Coding Platform
 
 > Next-Generation Autonomous AI Agent Platform for Software Development & Deployment.
 
@@ -9,7 +9,7 @@
 
 ## 🚀 Overview
 
-**GUIDESOFT.AI** is an advanced autonomous multi-agent AI coding platform. It allows users to build, refactor, test, and deploy applications simply by chatting with AI agents powered by top cloud and local AI models.
+**GUIDESOFT.ONLINE** is an advanced autonomous multi-agent AI coding platform. It allows users to build, refactor, test, and deploy applications simply by chatting with AI agents powered by top cloud and local AI models.
 
 ### 🌟 Key Features
 

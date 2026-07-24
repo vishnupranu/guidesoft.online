@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'GUIDESOFT.AI | AI Coding Agent Platform',
+  title: 'GUIDESOFT.ONLINE | AI Coding Platform',
   description:
     'GUIDESOFT.AI - AI-powered coding platform supporting Claude Code, OpenAI Codex CLI, GitHub Copilot, Cursor CLI, Gemini, and opencode with Vercel Sandbox',
   icons: {
