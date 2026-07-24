@@ -28,6 +28,9 @@ export const users = pgTable(
     email: text('email'),
     name: text('name'),
     avatarUrl: text('avatar_url'),
+    role: text('role', { enum: ['free_user', 'paid_user', 'admin', 'super_admin'] })
+      .notNull()
+      .default('free_user'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
     lastLoginAt: timestamp('last_login_at').defaultNow().notNull(),
@@ -49,6 +52,7 @@ export const insertUserSchema = z.object({
   email: z.string().email().optional(),
   name: z.string().optional(),
   avatarUrl: z.string().url().optional(),
+  role: z.enum(['free_user', 'paid_user', 'admin', 'super_admin']).default('free_user'),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   lastLoginAt: z.date().optional(),
@@ -65,6 +69,7 @@ export const selectUserSchema = z.object({
   email: z.string().nullable(),
   name: z.string().nullable(),
   avatarUrl: z.string().nullable(),
+  role: z.enum(['free_user', 'paid_user', 'admin', 'super_admin']),
   createdAt: z.date(),
   updatedAt: z.date(),
   lastLoginAt: z.date(),

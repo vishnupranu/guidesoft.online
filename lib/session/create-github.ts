@@ -56,23 +56,34 @@ export async function createGitHubSession(accessToken: string, scope?: string): 
     provider: 'github',
     externalId: `${githubUser.id}`, // GitHub numeric ID
     accessToken: encrypt(accessToken), // Encrypt before storing
-    refreshToken: undefined, // GitHub OAuth doesn't provide refresh tokens
+    refreshToken: undefined as string | undefined, // GitHub OAuth doesn't provide refresh tokens
     scope: scope || undefined,
+    role: 'free_user',
     username: githubUser.login,
     email: email || undefined,
     name: githubUser.name || githubUser.login,
     avatarUrl: githubUser.avatar_url,
   })
 
+  // get user by id to get role
+  const { getUserById } = await import('@/lib/db/users')
+  const user = await getUserById(userId)
+
+  if (!user) {
+    console.error('Failed to get user after upsert')
+    return undefined
+  }
+
   const session: Session = {
     created: Date.now(),
     authProvider: 'github',
     user: {
-      id: userId, // Internal user ID
-      username: githubUser.login,
-      email: email || undefined,
-      name: githubUser.name || githubUser.login,
-      avatar: githubUser.avatar_url,
+      id: user.id, // Internal user ID
+      username: user.username,
+      email: user.email || undefined,
+      name: user.name || undefined,
+      avatar: user.avatarUrl || '',
+      role: user.role as 'free_user' | 'paid_user' | 'admin' | 'super_admin',
     },
   }
 

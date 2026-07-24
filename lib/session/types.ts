@@ -21,4 +21,5 @@ interface User {
   email: string | undefined
   avatar: string
   name?: string
+  role: 'free_user' | 'paid_user' | 'admin' | 'super_admin'
 }

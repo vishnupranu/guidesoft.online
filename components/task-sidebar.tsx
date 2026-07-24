@@ -168,50 +168,56 @@ export function TaskSidebar({ tasks, width = 288 }: TaskSidebarProps) {
 
         {/* Dynamic AI Navigation Links (ChatGPT, Cursor & bolt.new Standard) */}
         <div className="space-y-0.5 px-1 py-1 border-y border-zinc-800/60 font-medium">
-          <Link
-            href="/workflow"
-            onClick={handleLinkClick}
-            className={cn(
-              'flex items-center justify-between px-2.5 py-1.5 rounded-md transition-colors hover:bg-zinc-900 text-zinc-300',
-              pathname === '/workflow' && 'bg-zinc-900 text-emerald-400 font-semibold',
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <Layers className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Agentic Workflows</span>
-            </div>
-            <ChevronRight className="w-3 h-3 text-zinc-600" />
-          </Link>
+          {session?.user && ['paid_user', 'admin', 'super_admin'].includes(session.user.role) && (
+            <Link
+              href="/workflow"
+              onClick={handleLinkClick}
+              className={cn(
+                'flex items-center justify-between px-2.5 py-1.5 rounded-md transition-colors hover:bg-zinc-900 text-zinc-300',
+                pathname === '/workflow' && 'bg-zinc-900 text-emerald-400 font-semibold',
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <Layers className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Agentic Workflows</span>
+              </div>
+              <ChevronRight className="w-3 h-3 text-zinc-600" />
+            </Link>
+          )}
 
-          <Link
-            href="/mcp-hub"
-            onClick={handleLinkClick}
-            className={cn(
-              'flex items-center justify-between px-2.5 py-1.5 rounded-md transition-colors hover:bg-zinc-900 text-zinc-300',
-              pathname === '/mcp-hub' && 'bg-zinc-900 text-emerald-400 font-semibold',
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <Server className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Connectors &amp; MCP Hub</span>
-            </div>
-            <ChevronRight className="w-3 h-3 text-zinc-600" />
-          </Link>
+          {session?.user && ['admin', 'super_admin'].includes(session.user.role) && (
+            <>
+              <Link
+                href="/mcp-hub"
+                onClick={handleLinkClick}
+                className={cn(
+                  'flex items-center justify-between px-2.5 py-1.5 rounded-md transition-colors hover:bg-zinc-900 text-zinc-300',
+                  pathname === '/mcp-hub' && 'bg-zinc-900 text-emerald-400 font-semibold',
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Server className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Connectors &amp; MCP Hub</span>
+                </div>
+                <ChevronRight className="w-3 h-3 text-zinc-600" />
+              </Link>
 
-          <Link
-            href="/skills"
-            onClick={handleLinkClick}
-            className={cn(
-              'flex items-center justify-between px-2.5 py-1.5 rounded-md transition-colors hover:bg-zinc-900 text-zinc-300',
-              pathname === '/skills' && 'bg-zinc-900 text-emerald-400 font-semibold',
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Skills &amp; System Prompts</span>
-            </div>
-            <ChevronRight className="w-3 h-3 text-zinc-600" />
-          </Link>
+              <Link
+                href="/skills"
+                onClick={handleLinkClick}
+                className={cn(
+                  'flex items-center justify-between px-2.5 py-1.5 rounded-md transition-colors hover:bg-zinc-900 text-zinc-300',
+                  pathname === '/skills' && 'bg-zinc-900 text-emerald-400 font-semibold',
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Skills &amp; System Prompts</span>
+                </div>
+                <ChevronRight className="w-3 h-3 text-zinc-600" />
+              </Link>
+            </>
+          )}
 
           <Link
             href="/repos/new"

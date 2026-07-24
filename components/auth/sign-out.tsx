@@ -22,6 +22,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Key, Server } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
 import { getEnabledAuthProviders } from '@/lib/auth/providers'
+import { UpgradeButton } from '@/components/upgrade-button'
 
 interface RateLimitInfo {
   used: number
@@ -139,6 +140,8 @@ export function SignOut({ user, authProvider }: Pick<Session, 'user' | 'authProv
           <Key className="h-4 w-4 mr-2" />
           API Keys
         </DropdownMenuItem>
+
+        {user.role === 'free_user' && <UpgradeButton />}
 
         <DropdownMenuItem onClick={() => setShowSandboxesDialog(true)} className="cursor-pointer">
           <Server className="h-4 w-4 mr-2" />

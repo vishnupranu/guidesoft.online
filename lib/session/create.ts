@@ -24,6 +24,7 @@ export async function createSession(tokens: Tokens): Promise<Session | undefined
     accessToken: encrypt(tokens.accessToken), // Encrypt before storing
     refreshToken: tokens.refreshToken ? encrypt(tokens.refreshToken) : undefined, // Encrypt if present
     scope: undefined, // Vercel doesn't provide scope
+    role: 'free_user',
     username: user.username,
     email: user.email,
     name: user.name,
@@ -39,6 +40,7 @@ export async function createSession(tokens: Tokens): Promise<Session | undefined
       email: user.email,
       name: user.name,
       avatar: `https://vercel.com/api/www/avatar/?u=${user.username}`,
+      role: 'free_user' as const,
     },
   }
 
