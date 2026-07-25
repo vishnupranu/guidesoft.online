@@ -4,6 +4,7 @@
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-vishnupranu%2Fguidesoft.online-blue?logo=github)](https://github.com/vishnupranu/guidesoft.online)
 [![Vercel Live](https://img.shields.io/badge/Vercel-guidesoft.online-brightgreen?logo=vercel)](https://guidesoft.online)
+[![Dokploy](https://img.shields.io/badge/Dokploy-Deploy-blue?logo=docker)](https://dokploy.com)
 
 ---
 
@@ -26,6 +27,25 @@
 - **GitHub Integration**: Authenticate with GitHub, connect repositories, create branches, commit code, and manage Pull Requests.
 - **Agentic Skills Hub**: Built-in open-source system prompts, MCP tool connectors, and skill workflows.
 - **Split Auth Modal**: Seamless Sign In / Sign Up toggling with split-screen branding.
+
+---
+
+## 🚀 Quick Deploy
+
+### One-Click Deploy to Dokploy
+
+[![Deploy to Dokploy](https://www.dokploy.com/api/deploy?repository=https://github.com/vishnupranu/guidesoft.online&logo=guidesoft)](https://dokploy.com/new/clone?repository=https://github.com/vishnupranu/guidesoft.online)
+
+### Deploy to Dokploy Manually
+
+1. Clone the repository
+2. Copy `.env.example` to `.env.local` and fill in all required values
+3. Push to GitHub
+4. In Dokploy, connect your repository and deploy
+5. Set environment variables in Dokploy dashboard
+6. Run database migrations after first deploy
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for a detailed dokploy deployment guide.
 
 ---
 
@@ -142,8 +162,9 @@ The system automatically generates descriptive Git branch names using AI SDK 5 a
 - **AI SDK**: AI SDK 5 with Vercel AI Gateway integration
 - **AI Agents**: Claude Code, OpenAI Codex CLI, GitHub Copilot CLI, Cursor CLI, Google Gemini CLI, opencode
 - **Sandbox**: [Vercel Sandbox](https://vercel.com/docs/vercel-sandbox)
-- **Authentication**: Next Auth (OAuth with GitHub/Vercel)
+- **Authentication**: Next Auth (OAuth with GitHub/Vercel/Google)
 - **Git**: Automated branching and commits with AI-generated branch names
+- **Deployment**: Dokploy (Docker) or Vercel
 
 ## MCP Server Support
 

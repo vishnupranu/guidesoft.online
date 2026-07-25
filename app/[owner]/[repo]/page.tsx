@@ -4,6 +4,8 @@ import { getServerSession } from '@/lib/session/get-server-session'
 import { getGitHubStars } from '@/lib/github-stars'
 import { getMaxSandboxDuration } from '@/lib/db/settings'
 
+export const dynamic = 'force-dynamic'
+
 interface OwnerRepoPageProps {
   params: Promise<{
     owner: string

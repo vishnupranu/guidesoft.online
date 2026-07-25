@@ -1,0 +1,46 @@
+name: guidesoft-online
+
+services:
+  - name: guidesoft-online
+    type: dockerfile
+    dockerfilePath: Dockerfile
+    buildContext: .
+    ports:
+      - 3000:3000
+    env:
+      - POSTGRES_URL
+      - SANDBOX_VERCEL_TOKEN
+      - SANDBOX_VERCEL_TEAM_ID
+      - SANDBOX_VERCEL_PROJECT_ID
+      - JWE_SECRET
+      - ENCRYPTION_KEY
+      - NEXT_PUBLIC_AUTH_PROVIDERS
+      - NEXT_PUBLIC_GITHUB_CLIENT_ID
+      - GITHUB_CLIENT_SECRET
+      - NEXT_PUBLIC_VERCEL_CLIENT_ID
+      - VERCEL_CLIENT_SECRET
+      - ANTHROPIC_API_KEY
+      - AI_GATEWAY_API_KEY
+      - CURSOR_API_KEY
+      - GEMINI_API_KEY
+      - OPENAI_API_KEY
+      - NPM_TOKEN
+      - MAX_SANDBOX_DURATION
+      - MAX_MESSAGES_PER_DAY
+      - WEBHOOK_API_KEY
+      - FASTAPI_URL
+      - NEXT_PUBLIC_GOOGLE_CLIENT_ID
+      - GOOGLE_CLIENT_SECRET
+    healthCheck:
+      path: /api/auth/info
+      port: 3000
+      method: GET
+      interval: 30
+      timeout: 10
+      retries: 3
+    restart: always
+    deploy:
+      replicas: 1
+      resources:
+        cpu: 1
+        memory: 2Gi
