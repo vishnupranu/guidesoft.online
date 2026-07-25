@@ -183,7 +183,7 @@ Connect MCP Servers to extend Claude Code with additional tools and integrations
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/vercel-labs/guidesoft.online.git
+git clone https://github.com/vishnupranu/guidesoft.online.git
 cd guidesoft.online
 ```
 
@@ -348,6 +348,75 @@ pnpm build
 # Start production server
 pnpm start
 ```
+
+### Deploying to Dokploy
+
+Dokploy is a Docker-based deployment platform. To deploy:
+
+1. Ensure all environment variables are set in your Dokploy dashboard
+2. Connect this repository to Dokploy
+3. Dokploy will auto-detect `dokploy.yaml` and build the Docker image
+4. After the first deploy, run database migrations in Dokploy's terminal:
+   ```bash
+   pnpm db:generate
+   pnpm db:push
+   ```
+5. Set up OAuth callback URLs with your Dokploy domain
+6. Verify all routes and webhooks are connected
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for the full dokploy deployment process.
+
+## Deploying to Dokploy
+
+This project supports Dokploy deployment for self-hosted Docker deployments.
+
+### Prerequisites
+
+- A Dokploy instance (self-hosted or cloud)
+- PostgreSQL database (Neon, Supabase, or self-hosted)
+- Vercel account (for Sandbox and AI Gateway features)
+- GitHub OAuth app credentials
+
+### Deployment Steps
+
+1. Copy `.env.example` to `.env.local` and fill in all required values
+2. Commit all changes and push to GitHub
+3. In Dokploy, connect your repository
+4. Dokploy will auto-detect `dokploy.yaml` and configure the deployment
+5. Set environment variables in Dokploy dashboard (never commit `.env.local`)
+6. Deploy the project
+7. After the first successful deploy, run database migrations:
+   ```bash
+   pnpm db:generate
+   pnpm db:push
+   ```
+8. Update OAuth callback URLs with your Dokploy domain
+
+### Dokploy Configuration
+
+The `dokploy.yaml` file defines the deployment configuration including:
+- Docker build settings
+- Environment variables mapping
+- Health check endpoint (`/api/auth/info`)
+- Resource allocation (CPU, memory)
+- Restart policy
+
+### Dokploy Deployment Checklist
+
+- [ ] All environment variables set in Dokploy dashboard
+- [ ] Database migrations run after first deploy
+- [ ] OAuth callback URLs updated with Dokploy domain
+- [ ] Health check passing (`/api/auth/info`)
+- [ ] Webhook endpoints accessible externally
+- [ ] `WEBHOOK_API_KEY` configured for external integrations
+- [ ] Sandbox credentials (`SANDBOX_VERCEL_TOKEN`, etc.) valid
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for the complete detailed dokploy deployment guide.
+
+## Repository Visibility
+
+> **Note**: This repository is set to **private**. Access is granted by invitation only.
+> To make it private, go to GitHub Settings > Danger Zone > Change visibility.
 
 ## Contributing
 
