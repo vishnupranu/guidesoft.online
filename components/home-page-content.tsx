@@ -90,6 +90,17 @@ export function HomePageContent({
       newUrl.searchParams.delete('github_connected')
       window.history.replaceState({}, '', newUrl.toString())
     }
+
+    if (searchParams.get('error') === 'github_not_configured') {
+      toast.error('GitHub OAuth credentials not set', {
+        description: 'Set GITHUB_CLIENT_ID & GITHUB_CLIENT_SECRET in .env or Dokploy settings. You can also paste any public repo URL directly!',
+        duration: 8000,
+      })
+      setShowOpenRepoDialog(true)
+      const newUrl = new URL(window.location.href)
+      newUrl.searchParams.delete('error')
+      window.history.replaceState({}, '', newUrl.toString())
+    }
   }, [searchParams])
 
   // Check for newly created repo and select it
