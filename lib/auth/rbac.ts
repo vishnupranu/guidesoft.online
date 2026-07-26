@@ -1,3 +1,5 @@
+import { getServerSession } from '@/lib/session/get-server-session';
+
 export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'ENTERPRISE' | 'PREMIUM' | 'BASIC' | 'UNPAID';
 
 export const SUPER_ADMIN_EMAIL = 'pranu21m@gmail.com';
@@ -42,4 +44,24 @@ export function getUserRole(email: string | null | undefined, userSubscription?:
     default:
       return 'UNPAID';
   }
+}
+
+export async function requireRole(requiredRole: 'admin' | 'super_admin' | 'paid_user' | string) {
+  const session = await getServerSession();
+  const email = session?.user?.email;
+
+  if (requiredRole === 'admin' || requiredRole === 'super_admin') {
+    if (!isAdmin(email)) {
+      throw new Error(`Unauthorized: Role '${requiredRole}' requires Super Admin access (pranu21m@gmail.com).`);
+    }
+  } else if (requiredRole === 'paid_user') {
+    if (!isAdmin(email)) {
+      // For standard users, check paid status
+      const role = getUserRole(email);
+      if (role === 'UNPAID') {
+        throw new Error("Unauthorized: Active paid subscription required.");
+      }
+    }
+  }
+  return true;
 }
