@@ -12,52 +12,37 @@ export async function GET(req: NextRequest): Promise<Response> {
   const state = req.nextUrl.searchParams.get('state')
   const cookieStore = await cookies()
 
-  // Check if this is a sign-in flow or connect flow
   const authMode = cookieStore.get(`github_auth_mode`)?.value ?? null
-  const isSignInFlow = authMode === 'signin'
-  const isConnectFlow = authMode === 'connect'
+  const storedState =
+    cookieStore.get(`github_auth_state`)?.value ??
+    cookieStore.get(`github_oauth_state`)?.value ??
+    null
 
-  // Try both cookie patterns (new unified flow vs legacy oauth flow)
-  const storedState = cookieStore.get(authMode ? `github_auth_state` : `github_oauth_state`)?.value ?? null
   const storedRedirectTo =
-    cookieStore.get(authMode ? `github_auth_redirect_to` : `github_oauth_redirect_to`)?.value ?? null
-  const storedUserId = cookieStore.get(`github_oauth_user_id`)?.value ?? null // Required for connect flow
+    cookieStore.get(`github_auth_redirect_to`)?.value ??
+    cookieStore.get(`github_oauth_redirect_to`)?.value ??
+    '/'
 
-  // For sign-in flow, we don't need storedUserId
-  if (isSignInFlow) {
-    if (code === null || state === null || storedState !== state || storedRedirectTo === null) {
-      return new Response('Invalid OAuth state', {
-        status: 400,
-      })
-    }
-  } else {
-    // For connect flow (including legacy oauth flow), we need storedUserId
-    if (
-      code === null ||
-      state === null ||
-      storedState !== state ||
-      storedRedirectTo === null ||
-      storedUserId === null
-    ) {
-      return new Response('Invalid OAuth state', {
-        status: 400,
-      })
-    }
+  const storedUserId = cookieStore.get(`github_oauth_user_id`)?.value ?? null
+
+  const isSignInFlow = authMode === 'signin' || !storedUserId
+
+  // Validate state and code
+  if (!code || !state || !storedState || storedState !== state) {
+    console.error('[GitHub Callback] State mismatch or missing code', { code: !!code, state: !!state, storedState: !!storedState })
+    return Response.redirect(new URL('/?error=github_auth_failed', req.url))
   }
 
   const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || process.env.GITHUB_CLIENT_ID
   const clientSecret = process.env.GITHUB_CLIENT_SECRET
 
   if (!clientId || !clientSecret) {
-    return new Response('GitHub OAuth not configured', {
-      status: 500,
-    })
+    return Response.redirect(new URL('/?error=github_not_configured', req.url))
   }
 
   try {
-    console.log('[GitHub Callback] Starting OAuth flow, mode:', authMode)
+    console.log('[GitHub Callback] Exchanging code for token...')
 
-    // Exchange code for access token
     const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
       headers: {
@@ -73,9 +58,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 
     if (!tokenResponse.ok) {
       console.error('[GitHub Callback] Token exchange failed with status:', tokenResponse.status)
-      const errorText = await tokenResponse.text()
-      console.error('[GitHub Callback] Error response:', errorText)
-      return new Response('Failed to exchange code for token', { status: 400 })
+      return Response.redirect(new URL('/?error=github_token_exchange_failed', req.url))
     }
 
     const tokenData = (await tokenResponse.json()) as {
@@ -86,17 +69,11 @@ export async function GET(req: NextRequest): Promise<Response> {
       error_description?: string
     }
 
-    console.log('[GitHub Callback] Token data received, has access_token:', !!tokenData.access_token)
-
     if (!tokenData.access_token) {
       console.error('[GitHub Callback] Failed to get GitHub access token:', tokenData)
-      return new Response(
-        `Failed to authenticate with GitHub: ${tokenData.error_description || tokenData.error || 'Unknown error'}`,
-        { status: 400 },
-      )
+      return Response.redirect(new URL('/?error=github_token_missing', req.url))
     }
 
-    // Fetch GitHub user info
     const userResponse = await fetch('https://api.github.com/user', {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
@@ -110,19 +87,14 @@ export async function GET(req: NextRequest): Promise<Response> {
     }
 
     if (isSignInFlow) {
-      // SIGN-IN FLOW: Create a new session for the GitHub user
-      console.log('[GitHub Callback] Sign-in flow - creating GitHub session')
+      console.log('[GitHub Callback] Sign-in flow - creating GitHub session for:', githubUser.login)
       const session = await createGitHubSession(tokenData.access_token, tokenData.scope)
 
       if (!session) {
         console.error('[GitHub Callback] Failed to create GitHub session')
-        return new Response('Failed to create session', { status: 500 })
+        return Response.redirect(new URL('/?error=session_creation_failed', req.url))
       }
 
-      console.log('[GitHub Callback] GitHub session created for user:', session.user.id)
-      // Note: Tokens are already stored in users table by upsertUser() in createGitHubSession()
-
-      // Create response with redirect
       const response = new Response(null, {
         status: 302,
         headers: {
@@ -130,21 +102,18 @@ export async function GET(req: NextRequest): Promise<Response> {
         },
       })
 
-      // Save session to cookie
       await saveSession(response, session)
 
-      // Clean up cookies
       cookieStore.delete(`github_auth_state`)
       cookieStore.delete(`github_auth_redirect_to`)
       cookieStore.delete(`github_auth_mode`)
+      cookieStore.delete(`github_oauth_state`)
+      cookieStore.delete(`github_oauth_redirect_to`)
 
       return response
     } else {
-      // CONNECT FLOW: Add GitHub account to existing Vercel user
-      // Encrypt the access token before storing
       const encryptedToken = encrypt(tokenData.access_token)
 
-      // Check if this GitHub account is already connected somewhere
       const existingAccount = await db
         .select()
         .from(accounts)
@@ -154,26 +123,13 @@ export async function GET(req: NextRequest): Promise<Response> {
       if (existingAccount.length > 0) {
         const connectedUserId = existingAccount[0].userId
 
-        // If the GitHub account belongs to a different user, we need to merge accounts
         if (connectedUserId !== storedUserId) {
-          console.log(
-            `[GitHub Callback] Merging accounts: GitHub account ${githubUser.id} belongs to user ${connectedUserId}, connecting to user ${storedUserId}`,
-          )
-
-          // Transfer all tasks, connectors, accounts, and keys from old user to new user
           await db.update(tasks).set({ userId: storedUserId! }).where(eq(tasks.userId, connectedUserId))
           await db.update(connectors).set({ userId: storedUserId! }).where(eq(connectors.userId, connectedUserId))
           await db.update(accounts).set({ userId: storedUserId! }).where(eq(accounts.userId, connectedUserId))
           await db.update(keys).set({ userId: storedUserId! }).where(eq(keys.userId, connectedUserId))
-
-          // Delete the old user record (this will cascade delete their accounts/keys)
           await db.delete(users).where(eq(users.id, connectedUserId))
 
-          console.log(
-            `[GitHub Callback] Account merge complete. Old user ${connectedUserId} merged into ${storedUserId}`,
-          )
-
-          // Update the GitHub account token
           await db
             .update(accounts)
             .set({
@@ -185,7 +141,6 @@ export async function GET(req: NextRequest): Promise<Response> {
             })
             .where(eq(accounts.id, existingAccount[0].id))
         } else {
-          // Same user, just update the token
           await db
             .update(accounts)
             .set({
@@ -197,38 +152,28 @@ export async function GET(req: NextRequest): Promise<Response> {
             .where(eq(accounts.id, existingAccount[0].id))
         }
       } else {
-        // No existing GitHub account connection, create a new one
         await db.insert(accounts).values({
           id: nanoid(),
           userId: storedUserId!,
           provider: 'github',
-          externalUserId: `${githubUser.id}`, // Store GitHub numeric ID
+          externalUserId: `${githubUser.id}`,
           accessToken: encryptedToken,
           scope: tokenData.scope,
           username: githubUser.login,
         })
       }
 
-      // Clean up cookies (handle both new and legacy cookie names)
-      if (authMode) {
-        cookieStore.delete(`github_auth_state`)
-        cookieStore.delete(`github_auth_redirect_to`)
-        cookieStore.delete(`github_auth_mode`)
-      } else {
-        cookieStore.delete(`github_oauth_state`)
-        cookieStore.delete(`github_oauth_redirect_to`)
-      }
+      cookieStore.delete(`github_auth_state`)
+      cookieStore.delete(`github_auth_redirect_to`)
+      cookieStore.delete(`github_auth_mode`)
+      cookieStore.delete(`github_oauth_state`)
+      cookieStore.delete(`github_oauth_redirect_to`)
       cookieStore.delete(`github_oauth_user_id`)
 
-      // Redirect back to app
       return Response.redirect(new URL(storedRedirectTo, req.nextUrl.origin))
     }
   } catch (error) {
     console.error('[GitHub Callback] OAuth callback error:', error)
-    console.error('[GitHub Callback] Error stack:', error instanceof Error ? error.stack : 'No stack trace')
-    return new Response(
-      `Failed to complete GitHub authentication: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      { status: 500 },
-    )
+    return Response.redirect(new URL('/?error=github_callback_exception', req.url))
   }
 }

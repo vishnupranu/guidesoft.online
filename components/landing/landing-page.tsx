@@ -103,12 +103,16 @@ export function LandingPage({
       });
       if (res.ok) {
         const data = await res.json();
-        window.location.href = `/tasks/${data.id || data.taskId}`;
+        const taskId = data.task?.id || data.id || data.taskId;
+        window.location.href = `/tasks/${taskId}`;
+      } else if (res.status === 401) {
+        // Redirect to GitHub signin seamlessly if not logged in
+        window.location.href = '/api/auth/github/signin';
       } else {
         alert('Active paid membership required to generate and execute tasks.');
       }
     } catch (err) {
-      console.error(err);
+      console.error('Task submission error:', err);
     } finally {
       setIsTaskSubmitting(false);
     }

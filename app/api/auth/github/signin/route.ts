@@ -5,11 +5,7 @@ import { isRelativeUrl } from '@/lib/utils/is-relative-url'
 import { generateState } from 'arctic'
 
 export async function GET(req: NextRequest): Promise<Response> {
-  // Check if user is authenticated with Vercel first
   const session = await getSessionFromReq(req)
-  if (!session?.user) {
-    return Response.redirect(new URL('/', req.url))
-  }
 
   const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || process.env.GITHUB_CLIENT_ID
   const redirectUri = `${req.nextUrl.origin}/api/auth/github/callback`
@@ -24,12 +20,22 @@ export async function GET(req: NextRequest): Promise<Response> {
     ? (req.nextUrl.searchParams.get('next') ?? '/')
     : '/'
 
-  // Store state and redirect URL
-  for (const [key, value] of [
+  const isSignInFlow = !session?.user
+  const authMode = isSignInFlow ? 'signin' : 'connect'
+
+  const cookiesToSet: [string, string][] = [
+    [`github_auth_redirect_to`, redirectTo],
+    [`github_auth_state`, state],
+    [`github_auth_mode`, authMode],
     [`github_oauth_redirect_to`, redirectTo],
     [`github_oauth_state`, state],
-    [`github_oauth_user_id`, session.user.id], // Store Vercel user ID
-  ]) {
+  ]
+
+  if (session?.user?.id) {
+    cookiesToSet.push([`github_oauth_user_id`, session.user.id])
+  }
+
+  for (const [key, value] of cookiesToSet) {
     store.set(key, value, {
       path: '/',
       secure: process.env.NODE_ENV === 'production',
@@ -39,7 +45,6 @@ export async function GET(req: NextRequest): Promise<Response> {
     })
   }
 
-  // Build GitHub authorization URL
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,
@@ -48,17 +53,11 @@ export async function GET(req: NextRequest): Promise<Response> {
   })
 
   const url = `https://github.com/login/oauth/authorize?${params.toString()}`
-
-  // Redirect directly to GitHub
   return Response.redirect(url)
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  // Check if user is authenticated with Vercel first
   const session = await getSessionFromReq(req)
-  if (!session?.user) {
-    return Response.json({ error: 'Not authenticated' }, { status: 401 })
-  }
 
   const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || process.env.GITHUB_CLIENT_ID
   const redirectUri = `${req.nextUrl.origin}/api/auth/github/callback`
@@ -73,12 +72,22 @@ export async function POST(req: NextRequest): Promise<Response> {
     ? (req.nextUrl.searchParams.get('next') ?? '/')
     : '/'
 
-  // Store state and redirect URL
-  for (const [key, value] of [
+  const isSignInFlow = !session?.user
+  const authMode = isSignInFlow ? 'signin' : 'connect'
+
+  const cookiesToSet: [string, string][] = [
+    [`github_auth_redirect_to`, redirectTo],
+    [`github_auth_state`, state],
+    [`github_auth_mode`, authMode],
     [`github_oauth_redirect_to`, redirectTo],
     [`github_oauth_state`, state],
-    [`github_oauth_user_id`, session.user.id], // Store Vercel user ID
-  ]) {
+  ]
+
+  if (session?.user?.id) {
+    cookiesToSet.push([`github_oauth_user_id`, session.user.id])
+  }
+
+  for (const [key, value] of cookiesToSet) {
     store.set(key, value, {
       path: '/',
       secure: process.env.NODE_ENV === 'production',
@@ -88,7 +97,6 @@ export async function POST(req: NextRequest): Promise<Response> {
     })
   }
 
-  // Build GitHub authorization URL
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,
@@ -97,6 +105,5 @@ export async function POST(req: NextRequest): Promise<Response> {
   })
 
   const url = `https://github.com/login/oauth/authorize?${params.toString()}`
-
   return Response.json({ url })
 }
