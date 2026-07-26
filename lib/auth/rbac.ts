@@ -1,31 +1,45 @@
-import { getSessionFromCookie } from '@/lib/session/server'
-import { SESSION_COOKIE_NAME } from '@/lib/session/constants'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
+export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'ENTERPRISE' | 'PREMIUM' | 'BASIC' | 'UNPAID';
 
-export type Role = 'free_user' | 'paid_user' | 'admin' | 'super_admin'
+export const SUPER_ADMIN_EMAIL = 'pranu21m@gmail.com';
 
-const roleHierarchy: Record<Role, number> = {
-  free_user: 0,
-  paid_user: 1,
-  admin: 2,
-  super_admin: 3,
+export interface UserSession {
+  id: string;
+  email: string;
+  name?: string;
+  role: UserRole;
+  isPaid: boolean;
+  subscriptionPlan?: 'BASIC' | 'PREMIUM' | 'ENTERPRISE' | null;
+  bankAccountDetailsAdded?: boolean;
 }
 
-export function hasPermission(userRole: Role, requiredRole: Role): boolean {
-  return roleHierarchy[userRole] >= roleHierarchy[requiredRole]
+export function isSuperAdmin(email: string | null | undefined): boolean {
+  if (!email) return false;
+  return email.trim().toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase();
 }
 
-export async function requireRole(requiredRole: Role) {
-  const cookieStore = await cookies()
-  const session = await getSessionFromCookie(cookieStore.get(SESSION_COOKIE_NAME)?.value)
-  if (!session) {
-    redirect('/')
-  }
+export function isAdmin(email: string | null | undefined): boolean {
+  // Super admin and explicit admin access given to pranu21m@gmail.com only
+  return isSuperAdmin(email);
+}
 
-  if (!hasPermission(session.user.role, requiredRole)) {
-    redirect('/')
-  }
+export function canDeleteResource(email: string | null | undefined): boolean {
+  // Only super user admin has deletion rights for plugins, tasks, agents & connectors
+  return isSuperAdmin(email);
+}
 
-  return session
+export function getUserRole(email: string | null | undefined, userSubscription?: string): UserRole {
+  if (isSuperAdmin(email)) {
+    return 'SUPER_ADMIN';
+  }
+  
+  switch (userSubscription?.toUpperCase()) {
+    case 'ENTERPRISE':
+      return 'ENTERPRISE';
+    case 'PREMIUM':
+      return 'PREMIUM';
+    case 'BASIC':
+      return 'BASIC';
+    default:
+      return 'UNPAID';
+  }
 }
