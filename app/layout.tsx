@@ -34,6 +34,8 @@ export const metadata: Metadata = {
   },
 }
 
+import { CopyProtect } from '@/components/security/copy-protect'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -41,7 +43,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}>
+        <CopyProtect />
         <JotaiProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <SessionProvider />
