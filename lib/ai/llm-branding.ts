@@ -1,42 +1,47 @@
 export interface ConnectedModel {
   id: string;
   name: string;
-  provider: 'Ollama' | 'LLaMA' | 'GuideSoft' | 'Anthropic' | 'OpenClaw';
+  provider: 'GuideSoft' | 'OpenClaw' | 'Anthropic' | 'Ollama' | 'LLaMA';
   description: string;
+  inspiration: string;
   isDefault: boolean;
   status: 'active' | 'connected';
 }
 
 export const AUTO_CONNECTED_MODELS: ConnectedModel[] = [
   {
-    id: 'guidesoft-hybrid-v1',
-    name: 'GuideSoft AI Model (Ollama + LLaMA)',
+    id: 'guidesoft-hyper-matrix-v4',
+    name: 'GuideSoft Hyper-Matrix v4.5',
     provider: 'GuideSoft',
-    description: 'Custom fine-tuned hybrid model combining Ollama local speed and LLaMA 70B reasoning.',
+    description: 'Hybrid Neural Core orchestrating Ollama local inference speed & LLaMA 70B deep reasoning.',
+    inspiration: 'Inspired by Cursor & Bolt.new',
     isDefault: true,
     status: 'active',
   },
   {
-    id: 'openclaw-agent-v1',
-    name: 'OpenClaw Agent Orchestrator',
+    id: 'guidesoft-sovereign-agent-v1',
+    name: 'GuideSoft Sovereign Agent Matrix',
     provider: 'OpenClaw',
-    description: 'Autonomous multi-agent execution pipeline with custom skills engine.',
+    description: 'Autonomous multi-agent execution pipeline with custom skills engine & sandbox isolation.',
+    inspiration: 'Inspired by Lovable & Windsurf',
     isDefault: false,
     status: 'active',
   },
   {
-    id: 'claude-3-5-sonnet',
-    name: 'Claude 3.5 Sonnet (GuideSoft Skills)',
+    id: 'guidesoft-omni-synthesizer',
+    name: 'GuideSoft Omni-Synthesizer Pro',
     provider: 'Anthropic',
-    description: 'Advanced code generation and architectural synthesis model.',
+    description: 'High-speed multi-modal code synthesis & UI generation agent with real-time preview.',
+    inspiration: 'Inspired by v0.dev',
     isDefault: false,
     status: 'connected',
   },
   {
-    id: 'deepseek-r1-ollama',
-    name: 'DeepSeek R1 (Ollama Powered)',
+    id: 'guidesoft-algorithmic-deductor',
+    name: 'GuideSoft Algorithmic Reasoning Core',
     provider: 'Ollama',
-    description: 'Reasoning model for complex algorithmic calculations and logic deduction.',
+    description: 'Deep logic deduction engine for algorithmic optimization, debugging & test generation.',
+    inspiration: 'Inspired by Claude Code & DeepSeek',
     isDefault: false,
     status: 'connected',
   },
@@ -44,7 +49,7 @@ export const AUTO_CONNECTED_MODELS: ConnectedModel[] = [
 
 export function getBrandNotificationBanner(): { brand: string; subtitle: string } {
   return {
-    brand: 'GuideSoft AI Brand Model',
-    subtitle: 'Engineered with Ollama & LLaMA Hybrid Architecture',
+    brand: 'GuideSoft Hyper-Matrix Neural Model',
+    subtitle: 'Powered by Ollama + LLaMA Autonomous Hybrid Architecture',
   };
 }

@@ -257,7 +257,7 @@ export function PricingCardSection({ currentPlan = 'UNPAID', onSuccess }: Pricin
                 <div
                   className={`p-3 rounded-lg text-xs font-medium ${
                     paymentStatus.startsWith('Success')
-                      ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                      ? 'bg-primary/10 text-primary border border-primary/20'
                       : 'bg-destructive/10 text-destructive border border-destructive/20'
                   }`}
                 >

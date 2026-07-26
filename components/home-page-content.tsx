@@ -219,7 +219,7 @@ export function HomePageContent({
   }
 
   const handleReconfigureGitHub = () => {
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID
+    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || process.env.GITHUB_CLIENT_ID
     if (clientId) {
       window.open(`https://github.com/settings/connections/applications/${clientId}`, '_blank')
     } else {
