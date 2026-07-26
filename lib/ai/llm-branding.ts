@@ -3,7 +3,7 @@ export interface ConnectedModel {
   name: string;
   provider: 'GuideSoft' | 'OpenClaw' | 'Anthropic' | 'Ollama' | 'LLaMA';
   description: string;
-  inspiration: string;
+  capability: string;
   isDefault: boolean;
   status: 'active' | 'connected';
 }
@@ -11,37 +11,37 @@ export interface ConnectedModel {
 export const AUTO_CONNECTED_MODELS: ConnectedModel[] = [
   {
     id: 'guidesoft-hyper-matrix-v4',
-    name: 'GuideSoft Hyper-Matrix v4.5',
+    name: 'GuideSoft Speed Engine',
     provider: 'GuideSoft',
-    description: 'Hybrid Neural Core orchestrating Ollama local inference speed & LLaMA 70B deep reasoning.',
-    inspiration: 'Inspired by Cursor & Bolt.new',
+    description: 'High-velocity full-stack code synthesis, UI component generation, and real-time auto-completion.',
+    capability: 'Instant Code & UI Generation',
     isDefault: true,
     status: 'active',
   },
   {
     id: 'guidesoft-sovereign-agent-v1',
-    name: 'GuideSoft Sovereign Agent Matrix',
+    name: 'GuideSoft Sovereign Agent',
     provider: 'OpenClaw',
-    description: 'Autonomous multi-agent execution pipeline with custom skills engine & sandbox isolation.',
-    inspiration: 'Inspired by Lovable & Windsurf',
+    description: 'Autonomous multi-file software engineering agent for complex workflows and automated terminal tasks.',
+    capability: 'Autonomous Multi-Agent System',
     isDefault: false,
     status: 'active',
   },
   {
     id: 'guidesoft-omni-synthesizer',
-    name: 'GuideSoft Omni-Synthesizer Pro',
+    name: 'GuideSoft DeepReason Core',
     provider: 'Anthropic',
-    description: 'High-speed multi-modal code synthesis & UI generation agent with real-time preview.',
-    inspiration: 'Inspired by v0.dev',
+    description: 'Advanced architectural synthesis, algorithmic optimization, multi-file refactoring, and logic deduction.',
+    capability: 'Complex Problem Solving',
     isDefault: false,
     status: 'connected',
   },
   {
     id: 'guidesoft-algorithmic-deductor',
-    name: 'GuideSoft Algorithmic Reasoning Core',
+    name: 'GuideSoft Enterprise Omni',
     provider: 'Ollama',
-    description: 'Deep logic deduction engine for algorithmic optimization, debugging & test generation.',
-    inspiration: 'Inspired by Claude Code & DeepSeek',
+    description: 'End-to-end full-stack app building with custom database schemas, API connectors, and security audits.',
+    capability: 'Enterprise Stack Orchestration',
     isDefault: false,
     status: 'connected',
   },
@@ -49,7 +49,7 @@ export const AUTO_CONNECTED_MODELS: ConnectedModel[] = [
 
 export function getBrandNotificationBanner(): { brand: string; subtitle: string } {
   return {
-    brand: 'GuideSoft Hyper-Matrix Neural Model',
-    subtitle: 'Powered by Ollama + LLaMA Autonomous Hybrid Architecture',
+    brand: 'GuideSoft AI Product Suite',
+    subtitle: 'Autonomous Full-Stack Software Development Platform',
   };
 }
