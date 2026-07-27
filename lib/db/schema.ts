@@ -463,6 +463,51 @@ export const selectSettingSchema = z.object({
 export type Setting = z.infer<typeof selectSettingSchema>
 export type InsertSetting = z.infer<typeof insertSettingSchema>
 
+// Agents table - user-defined agent configurations
+export const agents = pgTable(
+  'agents',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    type: text('type').notNull(),
+    description: text('description'),
+    config: jsonb('config').$type<Record<string, unknown>>(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    userIdIndex: uniqueIndex('agents_user_id_idx').on(table.userId),
+  }),
+)
+
+export const insertAgentSchema = z.object({
+  id: z.string().optional(),
+  userId: z.string(),
+  name: z.string().min(1, 'Name is required'),
+  type: z.string().min(1, 'Type is required'),
+  description: z.string().optional(),
+  config: z.record(z.string(), z.unknown()).optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+})
+
+export const selectAgentSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  name: z.string(),
+  type: z.string(),
+  description: z.string().nullable(),
+  config: z.record(z.string(), z.unknown()).nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
+
+export type Agent = z.infer<typeof selectAgentSchema>
+export type InsertAgent = z.infer<typeof insertAgentSchema>
+
 // Keep legacy export for backwards compatibility during migration
 export const userConnections = accounts
 export type UserConnection = Account
