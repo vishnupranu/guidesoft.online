@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import { TaskPageClient } from '@/components/task-page-client'
 import { getServerSession } from '@/lib/session/get-server-session'
 import { getGitHubStars } from '@/lib/github-stars'
@@ -13,6 +14,10 @@ interface TaskPageProps {
 export default async function TaskPage({ params }: TaskPageProps) {
   const { taskId } = await params
   const session = await getServerSession()
+
+  if (!session?.user?.id) {
+    redirect('/auth/signin?redirect=/tasks/' + taskId)
+  }
 
   // Get max sandbox duration for this user (user-specific > global > env var)
   const maxSandboxDuration = await getMaxSandboxDuration(session?.user?.id)

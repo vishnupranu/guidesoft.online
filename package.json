@@ -1,6 +1,7 @@
 {
   "name": "guidesoft.online",
   "version": "2.0.0",
+  "description": "AI-powered autonomous multi-agent coding platform for building, refactoring, testing, and deploying applications with Vercel Sandbox, GitHub integration, and user authentication",
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
@@ -14,6 +15,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
+    "postinstall": "drizzle-kit generate",
     "prepare": "husky"
   },
   "dependencies": {

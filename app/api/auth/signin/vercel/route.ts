@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import { isRelativeUrl } from '@/lib/utils/is-relative-url'
 import { CodeChallengeMethod, OAuth2Client, generateCodeVerifier, generateState } from 'arctic'
 
-export async function POST(req: NextRequest): Promise<Response> {
+export async function GET(req: NextRequest): Promise<Response> {
   const client = new OAuth2Client(
     process.env.NEXT_PUBLIC_VERCEL_CLIENT_ID ?? '',
     process.env.VERCEL_CLIENT_SECRET ?? '',

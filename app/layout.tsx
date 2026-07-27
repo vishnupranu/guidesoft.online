@@ -9,6 +9,7 @@ import { SessionProvider } from '@/components/auth/session-provider'
 import { JotaiProvider } from '@/components/providers/jotai-provider'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { APP_NAME, VERSION } from '@/lib/constants'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -21,9 +22,74 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'GUIDESOFT.ONLINE | AI Coding Platform',
+  title: {
+    default: `${APP_NAME} — AI Coding Platform`,
+    template: `%s | ${APP_NAME}`,
+  },
   description:
-    'GUIDESOFT.AI - AI-powered coding platform supporting Claude Code, OpenAI Codex CLI, GitHub Copilot, Cursor CLI, Gemini, and opencode with Vercel Sandbox',
+    'AI-powered autonomous multi-agent coding platform for building, refactoring, testing, and deploying applications with Vercel Sandbox, GitHub integration, and user authentication.',
+  keywords: [
+    'AI coding',
+    'AI agents',
+    'coding platform',
+    'Vercel Sandbox',
+    'GitHub integration',
+    'Claude Code',
+    'OpenAI Codex',
+    'GitHub Copilot',
+    'Cursor CLI',
+    'Google Gemini',
+    'opencode',
+    'autonomous development',
+    'multi-agent AI',
+    'software development',
+    'AI pair programmer',
+  ],
+  authors: [{ name: 'GUIDESOFT' }],
+  creator: 'GUIDESOFT',
+  publisher: 'GUIDESOFT',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://guidesoft.online'),
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://guidesoft.online',
+    siteName: APP_NAME,
+    title: `${APP_NAME} — AI Coding Platform`,
+    description:
+      'AI-powered autonomous multi-agent coding platform for building, refactoring, testing, and deploying applications with Vercel Sandbox and GitHub integration.',
+    images: [
+      {
+        url: '/guidesoft-full-logo-light.png',
+        width: 1200,
+        height: 630,
+        alt: APP_NAME,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${APP_NAME} — AI Coding Platform`,
+    description:
+      'AI-powered autonomous multi-agent coding platform for building, refactoring, testing, and deploying applications with Vercel Sandbox and GitHub integration.',
+    images: ['/guidesoft-full-logo-light.png'],
+    creator: '@guidesoft',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: [
       { url: '/guidesoft-logo.png', type: 'image/png' },

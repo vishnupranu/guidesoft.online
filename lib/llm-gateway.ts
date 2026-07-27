@@ -1,5 +1,6 @@
 import { generateText } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import { anthropic } from '@ai-sdk/anthropic'
 
 export type AvailableModels = 'claude-3-7-sonnet' | 'gpt-4-turbo' | 'deepseek-r1' | 'ollama-llama-3'
 
@@ -8,48 +9,81 @@ interface RouteOptions {
   prompt: string
 }
 
+function getModelForTask(taskType: AvailableModels): AvailableModels {
+  return taskType
+}
+
 export class LLMGateway {
   static routeTask(options: RouteOptions) {
     console.log(`[LLM Gateway] Routing task of type: ${options.taskType}`)
 
     let selectedModel: AvailableModels = 'gpt-4-turbo'
+    let provider: 'openai' | 'anthropic' | 'deepseek' | 'ollama' = 'openai'
 
     switch (options.taskType) {
       case 'reasoning':
         selectedModel = 'deepseek-r1'
+        provider = 'deepseek'
         break
       case 'coding':
         selectedModel = 'claude-3-7-sonnet'
+        provider = 'anthropic'
         break
       case 'local-privacy':
         selectedModel = 'ollama-llama-3'
+        provider = 'ollama'
         break
+      case 'general':
       default:
         selectedModel = 'gpt-4-turbo'
+        provider = 'openai'
     }
 
-    console.log(`[LLM Gateway] Selected model: ${selectedModel} (Optimized for speed/cost/capability)`)
+    console.log(`[LLM Gateway] Selected model: ${selectedModel} via provider: ${provider}`)
 
     return {
       model: selectedModel,
       execute: async () => {
-        // Use OpenAI if the API key is present (mocking LiteLLM gateway which is OpenAI compatible)
-        if (process.env.OPENAI_API_KEY) {
-          try {
+        try {
+          if (provider === 'anthropic' && process.env.ANTHROPIC_API_KEY) {
             const { text } = await generateText({
-              // We pass the selected model string to the OpenAI provider,
-              // which would theoretically route it via LiteLLM/Portkey in a real setup
-              // @ts-expect-error - Type mismatch between ai and @ai-sdk/openai versions
+              model: anthropic('claude-3-7-sonnet-20250219'),
+              prompt: options.prompt,
+            })
+            return { text }
+          }
+
+          if (provider === 'deepseek' && process.env.OPENAI_API_KEY) {
+            const { text } = await generateText({
+              model: openai('deepseek-r1'),
+              prompt: options.prompt,
+            })
+            return { text }
+          }
+
+          if (provider === 'openai' && process.env.OPENAI_API_KEY) {
+            const { text } = await generateText({
               model: openai('gpt-4-turbo'),
               prompt: options.prompt,
             })
             return { text }
-          } catch (e) {
-            console.warn(`[LLM Gateway] Execution failed, falling back to mock...`, e)
           }
+
+          if (provider === 'ollama' && process.env.OLLAMA_API_URL) {
+            const { text } = await generateText({
+              model: openai('ollama-llama-3', {
+                baseURL: process.env.OLLAMA_API_URL + '/v1',
+              }),
+              prompt: options.prompt,
+            })
+            return { text }
+          }
+
+          console.warn(`[LLM Gateway] No API key found for provider ${provider}. Using fallback mock response.`)
+        } catch (e) {
+          console.warn(`[LLM Gateway] Execution failed, falling back to mock...`, e)
         }
 
-        console.warn(`[LLM Gateway] OPENAI_API_KEY not found. Using fallback mock response.`)
         return { text: `Mocked response from ${selectedModel}` }
       },
     }

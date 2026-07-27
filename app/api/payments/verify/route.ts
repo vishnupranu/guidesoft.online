@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { getSessionFromReq } from '@/lib/session/server'
+import { saveSession } from '@/lib/session/create'
 import { db } from '@/lib/db/client'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -27,13 +28,19 @@ export async function POST(req: NextRequest) {
     const isAuthentic = expectedSignature === razorpay_signature
 
     if (isAuthentic) {
-      // Payment successful, upgrade user role
       await db.update(users).set({ role: 'paid_user' }).where(eq(users.id, session.user.id))
 
-      // Note: The session cookie will still have role: 'free_user' until they re-login or
-      // the session is refreshed. A robust implementation would also update the session cookie here.
+      const updatedSession = {
+        ...session,
+        user: {
+          ...session.user,
+          role: 'paid_user' as const,
+        },
+      }
 
-      return NextResponse.json({ success: true, message: 'Payment verified and role upgraded' })
+      const response = NextResponse.json({ success: true, message: 'Payment verified and role upgraded' })
+      await saveSession(response, updatedSession)
+      return response
     } else {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
     }

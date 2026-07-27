@@ -5,7 +5,7 @@ import { users, accounts } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { decrypt } from '@/lib/crypto'
 
-type OAuthProvider = 'github' | 'vercel'
+type OAuthProvider = 'github' | 'vercel' | 'google'
 
 /**
  * Get the OAuth access token for a user from the database
@@ -13,6 +13,7 @@ type OAuthProvider = 'github' | 'vercel'
  *
  * For GitHub: Checks accounts table first (connected account), then users table (primary account)
  * For Vercel: Gets from users table (primary account only)
+ * For Google: Gets from users table (primary account only)
  */
 export async function getOAuthToken(
   userId: string,
@@ -20,7 +21,6 @@ export async function getOAuthToken(
 ): Promise<{ accessToken: string; refreshToken: string | null; expiresAt: Date | null } | null> {
   try {
     if (provider === 'github') {
-      // Check if user has GitHub as a connected account
       const account = await db
         .select({
           accessToken: accounts.accessToken,
@@ -39,7 +39,6 @@ export async function getOAuthToken(
         }
       }
 
-      // Fall back to checking if user signed in with GitHub (primary account)
       const user = await db
         .select({
           accessToken: users.accessToken,
@@ -53,11 +52,10 @@ export async function getOAuthToken(
         return {
           accessToken: decrypt(user[0].accessToken),
           refreshToken: user[0].refreshToken ? decrypt(user[0].refreshToken) : null,
-          expiresAt: null, // Users table doesn't have expiresAt
+          expiresAt: null,
         }
       }
     } else if (provider === 'vercel') {
-      // Vercel is only available as a primary account
       const user = await db
         .select({
           accessToken: users.accessToken,
@@ -71,7 +69,24 @@ export async function getOAuthToken(
         return {
           accessToken: decrypt(user[0].accessToken),
           refreshToken: user[0].refreshToken ? decrypt(user[0].refreshToken) : null,
-          expiresAt: null, // Users table doesn't have expiresAt
+          expiresAt: null,
+        }
+      }
+    } else if (provider === 'google') {
+      const user = await db
+        .select({
+          accessToken: users.accessToken,
+          refreshToken: users.refreshToken,
+        })
+        .from(users)
+        .where(and(eq(users.id, userId), eq(users.provider, 'google')))
+        .limit(1)
+
+      if (user[0]?.accessToken) {
+        return {
+          accessToken: decrypt(user[0].accessToken),
+          refreshToken: user[0].refreshToken ? decrypt(user[0].refreshToken) : null,
+          expiresAt: null,
         }
       }
     }

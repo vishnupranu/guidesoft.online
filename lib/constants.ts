@@ -1,3 +1,7 @@
+// Application constants
+export const APP_NAME = 'GUIDESOFT.AI'
+export const VERSION = '2.0.0'
+
 // Rate limiting configuration
 export const MAX_MESSAGES_PER_DAY = parseInt(process.env.MAX_MESSAGES_PER_DAY || '5', 10)
 

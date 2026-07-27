@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from '@/lib/session/get-server-session'
 import { LLMGateway } from '@/lib/llm-gateway'
 import { VectorStore } from '@/lib/vector-store'
 import { E2BSandbox } from '@/lib/e2b-sandbox'
 
 export async function POST(request: Request) {
   try {
+    const session = await getServerSession()
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { query, requiresExecution = false } = await request.json()
 
     if (!query) {
@@ -13,12 +19,10 @@ export async function POST(request: Request) {
 
     console.log(`[Orchestrator] Received query: "${query}"`)
 
-    // 1. Vector Store Retrieval (RAG)
     const memory = new VectorStore('agent-memory')
     const similarDocs = await memory.searchSimilar(query)
     console.log(`[Orchestrator] Retrieved ${similarDocs.length} context documents.`)
 
-    // 2. LLM Gateway Routing
     const taskType = query.toLowerCase().includes('code') ? 'coding' : 'reasoning'
     const router = LLMGateway.routeTask({
       taskType: taskType,
@@ -28,18 +32,15 @@ export async function POST(request: Request) {
     const llmResponse = await router.execute()
     let sandboxResult = null
 
-    // 3. E2B Sandbox Execution (if code is generated and execution is requested)
     if (requiresExecution && taskType === 'coding') {
       const sandbox = new E2BSandbox()
       await sandbox.initialize()
 
-      // We assume the LLM responded with some python code to run
       sandboxResult = await sandbox.runCode('python', 'print("Hello from orchestrated microVM")')
 
       await sandbox.close()
     }
 
-    // 4. Send Webhooks to Make/n8n (Mocked)
     console.log(`[Orchestrator] Triggering n8n/Make webhook for successful execution...`)
 
     return NextResponse.json({

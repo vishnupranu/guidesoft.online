@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /api/auth/
+Disallow: /tasks/
+Disallow: /repos/
+
+Sitemap: https://guidesoft.online/sitemap.xml

@@ -2,16 +2,20 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card } from '@/components/ui/card'
 import { redirectToSignIn } from '@/lib/session/redirect-to-sign-in'
 import { GitHubIcon } from '@/components/icons/github-icon'
 import { GoogleIcon } from '@/components/icons/google-icon'
 import { getEnabledAuthProviders } from '@/lib/auth/providers'
-import { ShieldCheck, Cpu, Layers, Server, CheckCircle2, ArrowRight } from 'lucide-react'
+import { Zap, ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export default function SignInPage() {
   const [loadingVercel, setLoadingVercel] = useState(false)
   const [loadingGitHub, setLoadingGitHub] = useState(false)
   const [loadingGoogle, setLoadingGoogle] = useState(false)
+  const [email, setEmail] = useState('')
 
   const { github: hasGitHub, vercel: hasVercel, google: hasGoogle } = getEnabledAuthProviders()
 
@@ -30,147 +34,121 @@ export default function SignInPage() {
     window.location.href = '/api/auth/signin/google'
   }
 
+  const handleEmailSignIn = (e: React.FormEvent) => {
+    e.preventDefault()
+    alert('Email/password auth coming soon. For now, please use Google or GitHub.')
+  }
+
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4 md:p-8 font-sans">
-      <div className="w-full max-w-4xl bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2">
-        {/* Left Side: Brand & Hero Showcase */}
-        <div className="bg-gradient-to-br from-zinc-900 via-zinc-950 to-emerald-950/40 p-8 md:p-12 flex flex-col justify-between border-b md:border-b-0 md:border-r border-zinc-800/80">
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <img src="/guidesoft-logo.png" alt="Logo" className="h-12 w-12 object-contain" />
+    <div className="min-h-screen bg-white dark:bg-zinc-950 flex items-center justify-center p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        <div className="text-center mb-8">
+          <a href="/" className="inline-flex items-center gap-2 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white font-bold shadow-lg shadow-orange-500/20">
+              G
             </div>
-
-            <div className="space-y-2">
-              <h2 className="text-2xl font-extrabold text-white leading-snug">
-                AI Coding Sandboxes & Multi-Agent Workflows
-              </h2>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                Connect your GitHub repositories and run Claude Code, OpenAI Codex, Cursor CLI, and Gemini in secure,
-                isolated sandboxes.
-              </p>
-            </div>
-
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center gap-3 text-xs text-zinc-300">
-                <div className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-emerald-400">
-                  <Cpu className="w-4 h-4" />
-                </div>
-                <span>Multi-Agent CLI Engine Orchestration</span>
-              </div>
-              <div className="flex items-center gap-3 text-xs text-zinc-300">
-                <div className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-emerald-400">
-                  <Layers className="w-4 h-4" />
-                </div>
-                <span>Interactive Live Shell & Sandbox Dev Servers</span>
-              </div>
-              <div className="flex items-center gap-3 text-xs text-zinc-300">
-                <div className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-emerald-400">
-                  <Server className="w-4 h-4" />
-                </div>
-                <span>Model Context Protocol (MCP) Server Hub</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-8 border-t border-zinc-800/60 flex items-center justify-between text-[11px] text-zinc-500">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" /> AES-256 Encrypted Session
+            <span className="font-black text-xl tracking-tight">
+              GUIDESOFT<span className="text-orange-500">.AI</span>
             </span>
-            <span>Universal Security</span>
-          </div>
-        </div>
-
-        {/* Right Side: Sign-In OAuth Buttons */}
-        <div className="p-8 md:p-12 flex flex-col justify-between bg-zinc-950">
-          <div className="space-y-6">
-            <div className="space-y-1">
-              <h3 className="text-xl font-bold text-white">Sign In to GUIDESOFT.AI</h3>
-              <p className="text-xs text-zinc-400">
-                Authenticate with your OAuth provider to access your repositories and tasks.
-              </p>
-            </div>
-
-            <div className="space-y-3 pt-4">
-              {hasGitHub && (
-                <Button
-                  onClick={handleGitHubSignIn}
-                  disabled={loadingVercel || loadingGitHub || loadingGoogle}
-                  className="w-full h-12 bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800 justify-start px-4 gap-3 text-sm font-semibold shadow-md"
-                >
-                  {loadingGitHub ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-4 h-4 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
-                      Connecting to GitHub...
-                    </span>
-                  ) : (
-                    <>
-                      <GitHubIcon className="h-5 w-5" />
-                      <span>Continue with GitHub</span>
-                    </>
-                  )}
-                </Button>
-              )}
-
-              {hasGoogle && (
-                <Button
-                  onClick={handleGoogleSignIn}
-                  disabled={loadingVercel || loadingGitHub || loadingGoogle}
-                  className="w-full h-12 bg-white hover:bg-zinc-100 text-black border border-zinc-200 justify-start px-4 gap-3 text-sm font-semibold shadow-md"
-                >
-                  {loadingGoogle ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-4 h-4 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
-                      Connecting to Google...
-                    </span>
-                  ) : (
-                    <>
-                      <GoogleIcon className="h-5 w-5" />
-                      <span>Continue with Google</span>
-                    </>
-                  )}
-                </Button>
-              )}
-
-
-              {hasVercel && (
-                <Button
-                  onClick={handleVercelSignIn}
-                  disabled={loadingVercel || loadingGitHub || loadingGoogle}
-                  className="w-full h-12 bg-white hover:bg-zinc-100 text-black justify-start px-4 gap-3 text-sm font-semibold shadow-md"
-                >
-                  {loadingVercel ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-4 h-4 rounded-full border-2 border-black border-t-transparent animate-spin" />
-                      Connecting to Vercel...
-                    </span>
-                  ) : (
-                    <>
-                      <svg viewBox="0 0 76 65" className="h-4 w-4 fill-current">
-                        <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
-                      </svg>
-                      <span>Continue with Vercel</span>
-                    </>
-                  )}
-                </Button>
-              )}
-            </div>
-
-            <div className="p-3.5 bg-zinc-900/60 border border-zinc-800 rounded-lg space-y-1">
-              <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Universal Permission Control
-              </span>
-              <p className="text-[11px] text-zinc-400 leading-relaxed">
-                User API keys and repository tokens are encrypted per user. Authentication handles user identity and
-                permissions universally.
-              </p>
-            </div>
-          </div>
-
-          <p className="text-[11px] text-zinc-500 text-center pt-6">
-            Protected by GUIDESOFT.AI Security and Vercel Sandbox Isolation.
+          </a>
+          <h1 className="text-3xl font-bold mb-2">Welcome back</h1>
+          <p className="text-zinc-600 dark:text-zinc-400 text-sm">
+            Sign in to continue building with AI
           </p>
         </div>
-      </div>
+
+        <Card className="p-8 border-zinc-200 dark:border-zinc-800 shadow-xl">
+          <div className="space-y-4">
+            {hasGitHub && (
+              <Button
+                onClick={handleGitHubSignIn}
+                disabled={loadingVercel || loadingGitHub || loadingGoogle}
+                variant="outline"
+                className="w-full h-12 justify-start gap-3 text-sm font-semibold border-zinc-200 dark:border-zinc-700"
+              >
+                {loadingGitHub ? (
+                  <div className="w-4 h-4 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
+                ) : (
+                  <GitHubIcon className="h-5 w-5" />
+                )}
+                Continue with GitHub
+              </Button>
+            )}
+
+            {hasGoogle && (
+              <Button
+                onClick={handleGoogleSignIn}
+                disabled={loadingVercel || loadingGitHub || loadingGoogle}
+                variant="outline"
+                className="w-full h-12 justify-start gap-3 text-sm font-semibold border-zinc-200 dark:border-zinc-700"
+              >
+                {loadingGoogle ? (
+                  <div className="w-4 h-4 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
+                ) : (
+                  <GoogleIcon className="h-5 w-5" />
+                )}
+                Continue with Google
+              </Button>
+            )}
+
+            {hasVercel && (
+              <Button
+                onClick={handleVercelSignIn}
+                disabled={loadingVercel || loadingGitHub || loadingGoogle}
+                variant="outline"
+                className="w-full h-12 justify-start gap-3 text-sm font-semibold border-zinc-200 dark:border-zinc-700"
+              >
+                {loadingVercel ? (
+                  <div className="w-4 h-4 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
+                ) : (
+                  <svg viewBox="0 0 76 65" className="h-5 w-5 fill-current">
+                    <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
+                  </svg>
+                )}
+                Continue with Vercel
+              </Button>
+            )}
+          </div>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-zinc-200 dark:border-zinc-800" />
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="bg-white dark:bg-zinc-950 px-3 text-zinc-500">or</span>
+            </div>
+          </div>
+
+          <form onSubmit={handleEmailSignIn} className="space-y-4">
+            <Input
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-12 rounded-xl border-zinc-200 dark:border-zinc-800"
+            />
+            <Button type="submit" variant="secondary" className="w-full h-12 font-semibold">
+              Continue with email
+            </Button>
+          </form>
+
+          <p className="text-center text-sm text-zinc-500 mt-6">
+            Don&apos;t have an account?{' '}
+            <a href="/auth/signin" className="text-orange-500 hover:text-orange-600 font-semibold">
+              Sign up
+            </a>
+          </p>
+        </Card>
+
+        <p className="text-center text-xs text-zinc-400 mt-6">
+          Protected by GUIDESOFT.AI Security
+        </p>
+      </motion.div>
     </div>
   )
 }

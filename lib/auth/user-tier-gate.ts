@@ -10,39 +10,31 @@ export interface TierLimits {
 }
 
 export const TIER_CONFIG: Record<string, TierLimits> = {
-  UNPAID: {
-    dailyTokenLimit: 0, // No free generation
+  free_user: {
+    dailyTokenLimit: 0,
     canCloneGithub: false,
     canUsePlugins: false,
     canUseSkills: false,
     canAccessApiGateway: false,
     maxCustomAgents: 0,
   },
-  BASIC: {
-    dailyTokenLimit: 50000, // ₹499 one-time joining fee
-    canCloneGithub: false,
-    canUsePlugins: false,
-    canUseSkills: false,
-    canAccessApiGateway: false,
-    maxCustomAgents: 2,
-  },
-  PREMIUM: {
-    dailyTokenLimit: 500000, // ₹3999/mo
+  paid_user: {
+    dailyTokenLimit: 500000,
     canCloneGithub: true,
     canUsePlugins: true,
     canUseSkills: true,
     canAccessApiGateway: true,
     maxCustomAgents: 25,
   },
-  ENTERPRISE: {
-    dailyTokenLimit: 5000000, // Agency custom tier
+  admin: {
+    dailyTokenLimit: 5000000,
     canCloneGithub: true,
     canUsePlugins: true,
     canUseSkills: true,
     canAccessApiGateway: true,
     maxCustomAgents: 100,
   },
-  SUPER_ADMIN: {
+  super_admin: {
     dailyTokenLimit: 99999999,
     canCloneGithub: true,
     canUsePlugins: true,
@@ -61,27 +53,14 @@ export function checkFeatureAccess(session: UserSession | null, feature: keyof T
     return { allowed: true };
   }
 
-  if (!session.isPaid || !session.subscriptionPlan) {
-    return { 
-      allowed: false, 
-      reason: 'No active plan. Access requires subscription (Basic ₹499 joining fee or Premium ₹3999/mo).' 
-    };
-  }
-
-  if (!session.bankAccountDetailsAdded) {
-    return { 
-      allowed: false, 
-      reason: 'Mandatory banking address and account verification incomplete. Please update billing settings.' 
-    };
-  }
-
-  const limits = TIER_CONFIG[session.role] || TIER_CONFIG.UNPAID;
+  const role = session.user.role
+  const limits = TIER_CONFIG[role] || TIER_CONFIG.free_user;
   const isAllowed = Boolean(limits[feature]);
 
   if (!isAllowed) {
     return {
       allowed: false,
-      reason: `Feature '${feature}' requires Premium (₹3999/mo) or Enterprise tier plan.`,
+      reason: `Feature '${feature}' requires Premium or higher tier access.`,
     };
   }
 

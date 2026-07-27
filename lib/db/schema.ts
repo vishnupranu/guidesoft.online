@@ -78,6 +78,36 @@ export const selectUserSchema = z.object({
 export type User = z.infer<typeof selectUserSchema>
 export type InsertUser = z.infer<typeof insertUserSchema>
 
+export const contacts = pgTable('contacts', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull().default(''),
+  email: text('email').notNull(),
+  subject: text('subject'),
+  message: text('message').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const insertContactSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
+  email: z.string().email().min(1, 'Email is required'),
+  subject: z.string().optional(),
+  message: z.string().min(1, 'Message is required'),
+  createdAt: z.date().optional(),
+})
+
+export const selectContactSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+  subject: z.string().nullable(),
+  message: z.string(),
+  createdAt: z.date(),
+})
+
+export type Contact = z.infer<typeof selectContactSchema>
+export type InsertContact = z.infer<typeof insertContactSchema>
+
 export const tasks = pgTable('tasks', {
   id: text('id').primaryKey(),
   userId: text('user_id')

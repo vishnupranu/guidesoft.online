@@ -7,9 +7,7 @@ import { getOAuthToken } from '@/lib/session/get-oauth-token'
 export async function GET(req: NextRequest) {
   const session = await getSessionFromReq(req)
   if (session) {
-    // Check which provider the user authenticated with
     if (session.authProvider === 'github') {
-      // Revoke GitHub token - fetch from database
       try {
         const tokenData = await getOAuthToken(session.user.id, 'github')
         const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || process.env.GITHUB_CLIENT_ID
@@ -26,8 +24,7 @@ export async function GET(req: NextRequest) {
       } catch (error) {
         console.error('Failed to revoke GitHub token:', error)
       }
-    } else {
-      // Revoke Vercel token - fetch from database
+    } else if (session.authProvider === 'vercel') {
       try {
         const tokenData = await getOAuthToken(session.user.id, 'vercel')
         if (tokenData) {
@@ -42,6 +39,20 @@ export async function GET(req: NextRequest) {
         }
       } catch (error) {
         console.error('Failed to revoke Vercel token:', error)
+      }
+    } else if (session.authProvider === 'google') {
+      try {
+        const tokenData = await getOAuthToken(session.user.id, 'google')
+        if (tokenData) {
+          await fetch(`https://accounts.google.com/o/oauth2/revoke?token=${tokenData.accessToken}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          })
+        }
+      } catch (error) {
+        console.error('Failed to revoke Google token:', error)
       }
     }
   }

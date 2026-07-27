@@ -5,9 +5,9 @@ import { upsertUser } from '@/lib/db/users'
 import { encrypt } from '@/lib/crypto'
 
 interface GoogleUser {
-  id: string
+  sub: string
   email: string
-  verified_email: boolean
+  email_verified: boolean
   name: string
   given_name: string
   family_name: string
@@ -16,8 +16,7 @@ interface GoogleUser {
 }
 
 export async function createGoogleSession(accessToken: string, scope?: string): Promise<Session | undefined> {
-  // Fetch Google user info
-  const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+  const userResponse = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
     headers: {
       Authorization: `Bearer ${accessToken}`,
       Accept: 'application/json',
@@ -31,21 +30,19 @@ export async function createGoogleSession(accessToken: string, scope?: string): 
 
   const googleUser = (await userResponse.json()) as GoogleUser
 
-  // Create or update user in database
   const userId = await upsertUser({
     provider: 'google',
-    externalId: googleUser.id,
-    accessToken: encrypt(accessToken), // Encrypt before storing
-    refreshToken: undefined, // Update later if requested via offline access
+    externalId: googleUser.sub,
+    accessToken: encrypt(accessToken),
+    refreshToken: undefined,
     scope: scope || undefined,
-    role: 'free_user', // Give super_admin manually or via webhook if needed
-    username: googleUser.email.split('@')[0], // Generate simple username from email
+    role: 'free_user',
+    username: googleUser.email.split('@')[0],
     email: googleUser.email,
-    name: googleUser.name,
-    avatarUrl: googleUser.picture,
+    name: googleUser.name || googleUser.given_name || googleUser.email.split('@')[0],
+    avatarUrl: googleUser.picture || '',
   })
 
-  // get user by id to get role
   const { getUserById } = await import('@/lib/db/users')
   const user = await getUserById(userId)
 
@@ -58,7 +55,7 @@ export async function createGoogleSession(accessToken: string, scope?: string): 
     created: Date.now(),
     authProvider: 'google',
     user: {
-      id: user.id, // Internal user ID
+      id: user.id,
       username: user.username,
       email: user.email || undefined,
       name: user.name || undefined,
