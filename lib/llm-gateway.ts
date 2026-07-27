@@ -1,6 +1,5 @@
 import { generateText } from 'ai'
 import { openai } from '@ai-sdk/openai'
-import { anthropic } from '@ai-sdk/anthropic'
 
 export type AvailableModels = 'claude-3-7-sonnet' | 'gpt-4-turbo' | 'deepseek-r1' | 'ollama-llama-3'
 
@@ -46,11 +45,16 @@ export class LLMGateway {
       execute: async () => {
         try {
           if (provider === 'anthropic' && process.env.ANTHROPIC_API_KEY) {
-            const { text } = await generateText({
-              model: anthropic('claude-3-7-sonnet-20250219'),
-              prompt: options.prompt,
-            })
-            return { text }
+            try {
+              const { anthropic } = await import('@ai-sdk/anthropic')
+              const { text } = await generateText({
+                model: anthropic('claude-3-7-sonnet-20250219'),
+                prompt: options.prompt,
+              })
+              return { text }
+            } catch (importError) {
+              console.warn('[LLM Gateway] Anthropic provider not available, falling back...', importError)
+            }
           }
 
           if (provider === 'deepseek' && process.env.OPENAI_API_KEY) {

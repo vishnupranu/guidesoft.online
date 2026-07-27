@@ -1,7 +1,7 @@
 import WorkflowCanvas from '@/components/workflows/WorkflowCanvas'
 
 export const metadata = {
-  title: 'Workflow Builder | GUIDESOFT.ONLINE',
+  title: 'Workflow Builder | GUIDESOFT.AI',
   description: 'Design multi-agent workflows using a visual node editor.',
 }
 
