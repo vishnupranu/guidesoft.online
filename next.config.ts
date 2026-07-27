@@ -36,6 +36,7 @@ const nextConfig: NextConfig = {
     ],
   },
   output: 'standalone',
+  serverExternalPackages: ['shiki', 'streamdown'],
   async headers() {
     return [
       {
